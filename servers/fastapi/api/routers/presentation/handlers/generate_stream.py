@@ -149,6 +149,9 @@ class PresentationGenerateStreamHandler(FetchAssetsOnPresentationGenerationMixin
             )
         ):
             chunk = event.choices[0].delta.content
+            if chunk is None:
+                continue
+            
             presentation_text += chunk
             yield SSEResponse(
                 event="response",

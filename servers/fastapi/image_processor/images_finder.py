@@ -52,8 +52,7 @@ async def generate_image(
 
 async def generate_image_openai(prompt: str, output_directory: str) -> str:
     client = get_llm_client()
-    result = await asyncio.to_thread(
-        client.images.generate,
+    result = await client.images.generate(
         model="dall-e-3",
         prompt=prompt,
         n=1,
