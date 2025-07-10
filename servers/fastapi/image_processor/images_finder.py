@@ -1,4 +1,4 @@
-import asyncio
+import base64
 import os
 import uuid
 import aiohttp
@@ -49,24 +49,23 @@ async def generate_image(
         print(f"Error generating image: {e}")
         return get_resource("assets/images/placeholder.jpg")
 
-
 async def generate_image_openai(prompt: str, output_directory: str) -> str:
     client = get_llm_client()
     result = await client.images.generate(
-        model="dall-e-3",
+        model="gpt-image-1",
+        background="auto",
+        moderation="auto",
         prompt=prompt,
-        n=1,
-        quality="standard",
+        quality="high",
         size="1024x1024",
     )
-    image_url = result.data[0].url
-    async with aiohttp.ClientSession() as session:
-        async with session.get(image_url) as response:
-            image_bytes = await response.read()
-            image_path = os.path.join(output_directory, f"{str(uuid.uuid4())}.jpg")
-            with open(image_path, "wb") as f:
-                f.write(image_bytes)
-            return image_path
+    
+    b64_data = result.data[0].b64_json
+    image_bytes = base64.b64decode(b64_data)
+    image_path = os.path.join(output_directory, f"{str(uuid.uuid4())}.png")
+    with open(image_path, "wb") as f:
+        f.write(image_bytes)
+    return image_path
 
 
 async def generate_image_google(prompt: str, output_directory: str) -> str:
