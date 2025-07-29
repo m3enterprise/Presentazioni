@@ -5,7 +5,7 @@ from services.icon_finder_service import IconFinderService
 ICONS_ROUTER = APIRouter(prefix="/icons", tags=["Icons"])
 
 
-@ICONS_ROUTER.get("/search", response_model=List[str])
+@ICONS_ROUTER.get("/search", response_model=List[str], operation_id="search_icons")
 async def search_icons(query: str, limit: int = 20):
     icon_finder_service = IconFinderService()
     return await icon_finder_service.search_icons(query, limit)

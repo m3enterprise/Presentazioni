@@ -132,3 +132,4 @@ websockets==15.0.1
 xlsxwriter==3.2.5
 yarl==1.20.1
 zipp==3.23.0
+fastapi_mcp==0.4.0

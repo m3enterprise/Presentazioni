@@ -6,7 +6,7 @@ from utils.custom_llm_provider import list_available_custom_models
 CUSTOM_LLM_ROUTER = APIRouter(prefix="/custom_llm", tags=["Custom LLM"])
 
 
-@CUSTOM_LLM_ROUTER.post("/models/available", response_model=List[str])
+@CUSTOM_LLM_ROUTER.post("/models/available", response_model=List[str], operation_id="get_available_models")
 async def get_available_models(
     url: Annotated[Optional[str], Body()] = None,
     api_key: Annotated[Optional[str], Body()] = None,

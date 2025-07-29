@@ -17,7 +17,7 @@ from utils.randomizers import get_random_uuid
 SLIDE_ROUTER = APIRouter(prefix="/slide", tags=["Slide"])
 
 
-@SLIDE_ROUTER.post("/edit")
+@SLIDE_ROUTER.post("/edit", operation_id="edit_slide")
 async def edit_slide(id: Annotated[str, Body()], prompt: Annotated[str, Body()]):
 
     with get_sql_session() as sql_session:
@@ -62,7 +62,7 @@ async def edit_slide(id: Annotated[str, Body()], prompt: Annotated[str, Body()])
     return slide
 
 
-@SLIDE_ROUTER.post("/edit-html", response_model=SlideModel)
+@SLIDE_ROUTER.post("/edit-html", response_model=SlideModel, operation_id="edit_slide_html")
 async def edit_slide_html(
     id: Annotated[str, Body()],
     prompt: Annotated[str, Body()],

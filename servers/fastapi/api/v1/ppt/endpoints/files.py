@@ -13,7 +13,7 @@ from utils.validators import validate_files
 FILES_ROUTER = APIRouter(prefix="/files", tags=["Files"])
 
 
-@FILES_ROUTER.post("/upload", response_model=List[str])
+@FILES_ROUTER.post("/upload", response_model=List[str], operation_id="upload_files")
 async def upload_files(files: Optional[List[UploadFile]]):
     if not files:
         raise HTTPException(400, "Documents are required")
@@ -37,7 +37,7 @@ async def upload_files(files: Optional[List[UploadFile]]):
     return temp_files
 
 
-@FILES_ROUTER.post("/decompose", response_model=List[DecomposedFileInfo])
+@FILES_ROUTER.post("/decompose", response_model=List[DecomposedFileInfo], operation_id="decompose_files")
 async def decompose_files(file_paths: Annotated[List[str], Body(embed=True)]):
     temp_dir = TEMP_FILE_SERVICE.create_temp_dir(get_random_uuid())
 
@@ -76,7 +76,7 @@ async def decompose_files(file_paths: Annotated[List[str], Body(embed=True)]):
     return response
 
 
-@FILES_ROUTER.post("/update")
+@FILES_ROUTER.post("/update", operation_id="update_files")
 async def update_files(
     file_path: Annotated[str, Body()],
     file: Annotated[UploadFile, File()],

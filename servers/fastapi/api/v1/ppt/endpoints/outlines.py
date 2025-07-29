@@ -12,7 +12,7 @@ from utils.llm_calls.generate_presentation_outlines import generate_ppt_outline
 OUTLINES_ROUTER = APIRouter(prefix="/outlines", tags=["Outlines"])
 
 
-@OUTLINES_ROUTER.get("/stream")
+@OUTLINES_ROUTER.get("/stream", operation_id="stream_outlines")
 async def stream_outlines(presentation_id: str):
     with get_sql_session() as sql_session:
         presentation = sql_session.get(PresentationModel, presentation_id)
