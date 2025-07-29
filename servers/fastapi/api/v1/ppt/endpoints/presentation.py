@@ -48,7 +48,7 @@ from utils.validators import validate_files
 PRESENTATION_ROUTER = APIRouter(prefix="/presentation", tags=["Presentation"])
 
 
-@PRESENTATION_ROUTER.get("", response_model=PresentationWithSlides)
+@PRESENTATION_ROUTER.get("", response_model=PresentationWithSlides, operation_id="get_presentation")
 def get_presentation(id: str):
     with get_sql_session() as sql_session:
         presentation = sql_session.get(PresentationModel, id)
@@ -65,7 +65,7 @@ def get_presentation(id: str):
         )
 
 
-@PRESENTATION_ROUTER.delete("", status_code=204)
+@PRESENTATION_ROUTER.delete("", status_code=204, operation_id="delete_presentation")
 def delete_presentation(id: str):
     with get_sql_session() as sql_session:
         presentation = sql_session.get(PresentationModel, id)
@@ -80,7 +80,7 @@ def delete_presentation(id: str):
         sql_session.commit()
 
 
-@PRESENTATION_ROUTER.get("/all", response_model=List[PresentationWithSlides])
+@PRESENTATION_ROUTER.get("/all", response_model=List[PresentationWithSlides], operation_id="get_all_presentations")
 def get_all_presentations():
     with get_sql_session() as sql_session:
         presentations_with_slides = []
@@ -102,7 +102,7 @@ def get_all_presentations():
         return presentations_with_slides
 
 
-@PRESENTATION_ROUTER.post("/create", response_model=PresentationModel)
+@PRESENTATION_ROUTER.post("/create", response_model=PresentationModel, operation_id="create_presentation")
 async def create_presentation(
     prompt: Annotated[str, Body()],
     n_slides: Annotated[int, Body()],
@@ -135,7 +135,7 @@ async def create_presentation(
     return presentation
 
 
-@PRESENTATION_ROUTER.post("/prepare", response_model=PresentationModel)
+@PRESENTATION_ROUTER.post("/prepare", response_model=PresentationModel, operation_id="prepare_presentation")
 async def prepare_presentation(
     presentation_id: Annotated[str, Body()],
     outlines: Annotated[List[SlideOutlineModel], Body()],
@@ -182,7 +182,7 @@ async def prepare_presentation(
     return presentation
 
 
-@PRESENTATION_ROUTER.get("/stream", response_model=PresentationWithSlides)
+@PRESENTATION_ROUTER.get("/stream", response_model=PresentationWithSlides, operation_id="stream_presentation")
 async def stream_presentation(presentation_id: str):
     with get_sql_session() as sql_session:
         presentation = sql_session.get(PresentationModel, presentation_id)
@@ -276,7 +276,7 @@ async def stream_presentation(presentation_id: str):
     return StreamingResponse(inner(), media_type="text/event-stream")
 
 
-@PRESENTATION_ROUTER.put("/update", response_model=PresentationWithSlides)
+@PRESENTATION_ROUTER.put("/update", response_model=PresentationWithSlides, operation_id="update_presentation")
 def update_presentation(
     presentation_with_slides: Annotated[PresentationWithSlides, Body()],
 ):
@@ -303,7 +303,7 @@ def update_presentation(
     )
 
 
-@PRESENTATION_ROUTER.post("/export/pptx", response_model=str)
+@PRESENTATION_ROUTER.post("/export/pptx", response_model=str, operation_id="create_pptx")
 async def create_pptx(pptx_model: Annotated[PptxPresentationModel, Body()]):
     temp_dir = TEMP_FILE_SERVICE.create_temp_dir()
 
@@ -319,7 +319,7 @@ async def create_pptx(pptx_model: Annotated[PptxPresentationModel, Body()]):
     return pptx_path
 
 
-@PRESENTATION_ROUTER.post("/generate", response_model=PresentationPathAndEditPath)
+@PRESENTATION_ROUTER.post("/generate", response_model=PresentationPathAndEditPath, operation_id="generate_presentation")
 async def generate_presentation_api(
     prompt: Annotated[str, Body()],
     n_slides: Annotated[int, Body()] = 8,
@@ -461,7 +461,7 @@ async def generate_presentation_api(
     )
 
 
-@PRESENTATION_ROUTER.post("/from-template", response_model=PresentationPathAndEditPath)
+@PRESENTATION_ROUTER.post("/from-template", response_model=PresentationPathAndEditPath, operation_id="from_template")
 async def from_template(
     data: Annotated[GetPresentationUsingTemplateRequest, Body()],
 ):

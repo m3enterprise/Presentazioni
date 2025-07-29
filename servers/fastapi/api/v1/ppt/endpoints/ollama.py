@@ -12,17 +12,17 @@ from utils.ollama import list_pulled_ollama_models
 OLLAMA_ROUTER = APIRouter(prefix="/ollama", tags=["Ollama"])
 
 
-@OLLAMA_ROUTER.get("/models/supported", response_model=List[OllamaModelMetadata])
+@OLLAMA_ROUTER.get("/models/supported", response_model=List[OllamaModelMetadata], operation_id="get_supported_models")
 def get_supported_models():
     return SUPPORTED_OLLAMA_MODELS.values()
 
 
-@OLLAMA_ROUTER.get("/models/available", response_model=List[OllamaModelStatus])
+@OLLAMA_ROUTER.get("/models/available", response_model=List[OllamaModelStatus], operation_id="get_available_models")
 async def get_available_models():
     return await list_pulled_ollama_models()
 
 
-@OLLAMA_ROUTER.get("/model/pull", response_model=OllamaModelStatus)
+@OLLAMA_ROUTER.get("/model/pull", response_model=OllamaModelStatus, operation_id="pull_ollama_model")
 async def pull_model(model: str, background_tasks: BackgroundTasks):
 
     if model not in SUPPORTED_OLLAMA_MODELS:

@@ -36,6 +36,7 @@
 * ✅ **Custom layouts/templates/themes** — Create custom layouts with HTML and Tailwind, support any presentation design
 * ✅ **Bring Your Own Key** — Only pay for what you use. OpenAI, Gemini (More coming soon...)
 * ✅ **API Presentation Generation** — Host as API to generate presentations over requests
+* ✅ **MCP Integration** — Use Model Context Protocol for seamless integration with Cursor, Claude Desktop, and other AI tools
 * ✅ **Ollama Support** — Run open-source models locally with Ollama integration
 * ✅ **OpenAI API Compatibility** — Use any OpenAI-compatible API endpoint with your own models
 * ✅ **Versatile Image Generation** — Choose from DALL-E 3, Gemini Flash, Pexels, or Pixabay for your visuals
@@ -182,10 +183,55 @@ For detailed info checkout [API documentation](https://docs.presenton.ai/using-p
 - [Create Presentations from CSV using AI](https://docs.presenton.ai/tutorial/generate-presentation-from-csv)
 - [Create Data Reports Using AI](https://docs.presenton.ai/tutorial/create-data-reports-using-ai)
 
+## MCP Server Integration
+
+Presenton now supports **Model Context Protocol (MCP)** integration, allowing you to use Presenton's presentation generation capabilities directly from MCP-compatible clients like Cursor, Claude Desktop, and other AI tools.
+
+### MCP Configuration
+
+To connect to Presenton's MCP server, add the following configuration to your MCP client:
+
+**For Cursor (.cursor/mcp.json):**
+```json
+{
+  "mcpServers": {
+    "ppt_generator_mcp": {
+      "type": "http",
+      "url": "http://localhost:5000/mcp"
+    }
+  }
+}
+```
+
+**For Claude Desktop (claude_desktop_config.json):**
+```json
+{
+  "mcpServers": {
+    "ppt_generator_mcp": {
+      "type": "http", 
+      "url": "http://localhost:5000/mcp"
+    }
+  }
+}
+```
+
+Replace `localhost:5000` with your actual Presenton server URL and port.
+
+### MCP Features
+
+The MCP server provides the following capabilities:
+- **Generate Presentations**: Create presentations from prompts using AI
+- **Export Presentations**: Export as PPTX or PDF formats
+- **Custom Layouts**: Use predefined or custom presentation themes
+- **Document Integration**: Include supporting documents in presentations
+- **Multi-language Support**: Generate presentations in various languages
+
+Once configured, you can interact with Presenton directly from your MCP client to generate presentations, modify content, and export results.
+
 ## Roadmap
 - [x] Support for custom HTML templates by developers
 - [x] Support for accessing custom templates over API
-- [ ] Implement MCP server
+- [x] Implement MCP server
 - [ ] Ability for users to change system prompt
 - [X] Support external SQL database
 

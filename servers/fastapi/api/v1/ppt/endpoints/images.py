@@ -11,7 +11,7 @@ from utils.asset_directory_utils import get_images_directory
 IMAGES_ROUTER = APIRouter(prefix="/images", tags=["Images"])
 
 
-@IMAGES_ROUTER.get("/generate")
+@IMAGES_ROUTER.get("/generate", operation_id="generate_image")
 async def generate_image(prompt: str):
     images_directory = get_images_directory()
     image_prompt = ImagePrompt(prompt=prompt)
@@ -29,7 +29,7 @@ async def generate_image(prompt: str):
     return image_path
 
 
-@IMAGES_ROUTER.get("/generated", response_model=List[ImageAsset])
+@IMAGES_ROUTER.get("/generated", response_model=List[ImageAsset], operation_id="get_generated_images")
 async def get_generated_images():
     try:
         with get_sql_session() as sql_session:
