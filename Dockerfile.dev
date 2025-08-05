@@ -3,7 +3,9 @@ FROM python:3.11-slim-bookworm
 # Install Node.js and npm
 RUN apt-get update && apt-get install -y \
   nginx \
-  curl 
+  curl \
+  wget \
+  gnupg 
 
 
 # Install Node.js 20 using NodeSource repository
@@ -35,8 +37,13 @@ WORKDIR /node_dependencies
 COPY servers/nextjs/package.json servers/nextjs/package-lock.json ./
 RUN npm install
 
-# Install chrome for puppeteer
-RUN npx puppeteer browsers install chrome@138.0.7204.94 --install-deps
+# Install Chromium browser from Debian repositories (multi-arch support)
+RUN apt-get update \
+    && apt-get install -y chromium \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set Chromium executable path for Puppeteer
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 RUN chmod -R 777 /node_dependencies
 

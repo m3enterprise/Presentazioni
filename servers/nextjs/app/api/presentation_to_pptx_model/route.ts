@@ -21,7 +21,6 @@ interface GetAllChildElementsAttributesArgs {
   screenshotsDir: string;
 }
 
-
 export async function GET(request: NextRequest) {
   let browser: Browser | null = null;
   let page: Page | null = null;
@@ -61,25 +60,49 @@ async function getPresentationId(request: NextRequest) {
 }
 
 async function getBrowserAndPage(id: string): Promise<[Browser, Page]> {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--disable-web-security',
-    ],
-  });
+  try {
+    console.log("Launching Puppeteer browser...");
 
-  const page = await browser.newPage();
+    const browser = await puppeteer.launch({
+      headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--disable-web-security",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-renderer-backgrounding",
+        "--disable-features=TranslateUI",
+        "--disable-ipc-flooding-protection",
+      ],
+    });
+    console.log("Browser launched successfully");
 
-  await page.setViewport({ width: 1280, height: 720, deviceScaleFactor: 1 });
-  await page.goto(`http://localhost/pdf-maker?id=${id}`, {
-    waitUntil: "networkidle0",
-    timeout: 180000,
-  });
-  return [browser, page];
+    const page = await browser.newPage();
+    console.log("New page created");
+
+    await page.setViewport({ width: 1280, height: 720, deviceScaleFactor: 1 });
+    console.log("Viewport set");
+
+    const targetUrl = `http://localhost/pdf-maker?id=${id}`;
+    console.log(`Navigating to: ${targetUrl}`);
+
+    await page.goto(targetUrl, {
+      waitUntil: "networkidle0",
+      timeout: 180000,
+    });
+    console.log("Page loaded successfully");
+
+    return [browser, page];
+  } catch (error) {
+    console.error("Error in getBrowserAndPage:", error);
+    throw new ApiError(
+      `Failed to initialize browser: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
 }
 
 async function closeBrowserAndPage(browser: Browser | null, page: Page | null) {

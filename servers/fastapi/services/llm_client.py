@@ -39,8 +39,9 @@ class LLMClient:
 
     # ? Disable thinking
     def disable_thinking(self) -> bool:
+        # Only apply thinking control for CUSTOM providers that might support it
         if self.llm_provider != LLMProvider.CUSTOM:
-            return False
+            return True  # Disable thinking for all non-custom providers
         return parse_bool_or_none(get_disable_thinking_env()) or False
 
     # ? Clients
@@ -124,13 +125,15 @@ class LLMClient:
         max_tokens: Optional[int] = None,
     ):
         client: AsyncOpenAI = self._client
+        extra_body = {}
+        if not self.disable_thinking():
+            extra_body["enable_thinking"] = True
+
         response = await client.chat.completions.create(
             model=model,
             messages=[message.model_dump() for message in messages],
             max_completion_tokens=max_tokens,
-            extra_body={
-                "enable_thinking": not self.disable_thinking(),
-            },
+            **({"extra_body": extra_body} if extra_body else {}),
         )
         return response.choices[0].message.content
 
@@ -148,7 +151,7 @@ class LLMClient:
             config=GenerateContentConfig(
                 system_instruction=self._get_system_prompt(messages),
                 response_mime_type="text/plain",
-                max_output_tokens=max_tokens,
+                max_output_tokens=max_tokens or 8000,
             ),
         )
         return response.text
@@ -230,6 +233,11 @@ class LLMClient:
                 path=(),
                 root=response_schema,
             )
+
+        extra_body = {}
+        if not self.disable_thinking():
+            extra_body["enable_thinking"] = True
+
         if not use_tool_calls:
             response = await client.chat.completions.create(
                 model=model,
@@ -245,9 +253,7 @@ class LLMClient:
                     ),
                 },
                 max_completion_tokens=max_tokens,
-                extra_body={
-                    "enable_thinking": not self.disable_thinking(),
-                },
+                **({"extra_body": extra_body} if extra_body else {}),
             )
             content = response.choices[0].message.content
         else:
@@ -267,9 +273,7 @@ class LLMClient:
                 ],
                 tool_choice="required",
                 max_completion_tokens=max_tokens,
-                extra_body={
-                    "enable_thinking": not self.disable_thinking(),
-                },
+                **({"extra_body": extra_body} if extra_body else {}),
             )
             tool_calls = response.choices[0].message.tool_calls
             if tool_calls:
@@ -295,7 +299,7 @@ class LLMClient:
                 system_instruction=self._get_system_prompt(messages),
                 response_mime_type="application/json",
                 response_json_schema=response_format,
-                max_output_tokens=max_tokens,
+                max_output_tokens=max_tokens or 4000,
             ),
         )
         content = None
@@ -408,13 +412,16 @@ class LLMClient:
         max_tokens: Optional[int] = None,
     ):
         client: AsyncOpenAI = self._client
+
+        extra_body = {}
+        if not self.disable_thinking():
+            extra_body["enable_thinking"] = True
+
         async with client.chat.completions.stream(
             model=model,
             messages=[message.model_dump() for message in messages],
             max_completion_tokens=max_tokens,
-            extra_body={
-                "enable_thinking": not self.disable_thinking(),
-            },
+            **({"extra_body": extra_body} if extra_body else {}),
         ) as stream:
             async for event in stream:
                 if event.type == "content.delta":
@@ -433,7 +440,7 @@ class LLMClient:
             config=GenerateContentConfig(
                 system_instruction=self._get_system_prompt(messages),
                 response_mime_type="text/plain",
-                max_output_tokens=max_tokens,
+                max_output_tokens=max_tokens or 4000,
             ),
         ):
             if event.text:
@@ -509,6 +516,10 @@ class LLMClient:
                 path=(),
                 root=response_schema,
             )
+        extra_body = {}
+        if not self.disable_thinking():
+            extra_body["enable_thinking"] = True
+
         if not use_tool_calls:
             async with client.chat.completions.stream(
                 model=model,
@@ -524,9 +535,7 @@ class LLMClient:
                         },
                     }
                 ),
-                extra_body={
-                    "enable_thinking": not self.disable_thinking(),
-                },
+                **({"extra_body": extra_body} if extra_body else {}),
             ) as stream:
                 async for event in stream:
                     if event.type == "content.delta":
@@ -548,9 +557,7 @@ class LLMClient:
                     }
                 ],
                 tool_choice="required",
-                extra_body={
-                    "enable_thinking": not self.disable_thinking(),
-                },
+                **({"extra_body": extra_body} if extra_body else {}),
             ) as stream:
                 async for event in stream:
                     if event.type == "tool_calls.function.arguments.delta":
@@ -571,7 +578,7 @@ class LLMClient:
                 system_instruction=self._get_system_prompt(messages),
                 response_mime_type="application/json",
                 response_json_schema=response_format,
-                max_output_tokens=max_tokens,
+                max_output_tokens=max_tokens or 4000,
             ),
         ):
             if event.text:
