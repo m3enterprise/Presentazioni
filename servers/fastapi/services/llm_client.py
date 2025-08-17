@@ -387,7 +387,10 @@ class LLMClient:
         max_tokens: Optional[int] = None,
         depth: int = 0,
     ):
-        extra_body = {"enable_thinking": False} if self.disable_thinking() else None
+        extra_body = {}
+        if not self.disable_thinking():
+            extra_body["enable_thinking"] = True
+        
         return await self._generate_openai(
             model=model,
             messages=messages,
@@ -1074,7 +1077,10 @@ class LLMClient:
         max_tokens: Optional[int] = None,
         depth: int = 0,
     ):
-        extra_body = {"enable_thinking": False} if self.disable_thinking() else None
+        extra_body = {}
+        if not self.disable_thinking():
+            extra_body["enable_thinking"] = True
+        
         return self._stream_openai(
             model=model,
             messages=messages,
