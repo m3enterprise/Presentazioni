@@ -30,9 +30,10 @@ ENV TEMP_DIRECTORY=/tmp/presenton
 RUN curl -fsSL http://ollama.com/install.sh | sh
 
 # Install dependencies for FastAPI
+# TODO: manage this via uv?
 RUN pip install aiohttp aiomysql aiosqlite asyncpg fastapi[standard] \
   pathvalidate pdfplumber chromadb sqlmodel \
-  anthropic google-genai openai fastmcp
+  anthropic google-genai openai boto3 fastmcp
 RUN pip install docling --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Install dependencies for Next.js

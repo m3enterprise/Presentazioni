@@ -4,10 +4,12 @@ from constants.llm import (
     DEFAULT_ANTHROPIC_MODEL,
     DEFAULT_GOOGLE_MODEL,
     DEFAULT_OPENAI_MODEL,
+    DEFAULT_BEDROCK_MODEL
 )
 from enums.llm_provider import LLMProvider
 from utils.get_env import (
     get_anthropic_model_env,
+    get_bedrock_model_env,
     get_custom_model_env,
     get_google_model_env,
     get_llm_provider_env,
@@ -46,6 +48,10 @@ def is_custom_llm_selected():
     return get_llm_provider() == LLMProvider.CUSTOM
 
 
+def is_bedrock_selected():
+    return get_llm_provider() == LLMProvider.BEDROCK
+
+
 def get_model():
     selected_llm = get_llm_provider()
     if selected_llm == LLMProvider.OPENAI:
@@ -58,6 +64,8 @@ def get_model():
         return get_ollama_model_env()
     elif selected_llm == LLMProvider.CUSTOM:
         return get_custom_model_env()
+    elif selected_llm == LLMProvider.BEDROCK:
+        return get_bedrock_model_env() or DEFAULT_BEDROCK_MODEL
     else:
         raise HTTPException(
             status_code=500,

@@ -22,6 +22,12 @@ export interface LLMConfig {
   CUSTOM_LLM_API_KEY?: string;
   CUSTOM_MODEL?: string;
 
+  // Bedrock LLM
+  BEDROCK_AWS_REGION?: string;
+  BEDROCK_MODEL?: string;
+  BEDROCK_AWS_ACCESS_KEY_ID?: string;
+  BEDROCK_AWS_SECRET_ACCESS_KEY?: string;
+
   // Image providers
   IMAGE_PROVIDER?: string;
   PEXELS_API_KEY?: string;

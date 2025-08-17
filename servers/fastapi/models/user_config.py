@@ -26,6 +26,12 @@ class UserConfig(BaseModel):
     CUSTOM_LLM_API_KEY: Optional[str] = None
     CUSTOM_MODEL: Optional[str] = None
 
+    # Bedrock
+    BEDROCK_AWS_REGION: Optional[str] = None
+    BEDROCK_AWS_ACCESS_KEY_ID: Optional[str] = None
+    BEDROCK_AWS_SECRET_ACCESS_KEY: Optional[str] = None
+    BEDROCK_MODEL: Optional[str] = None
+
     # Image Provider
     IMAGE_PROVIDER: Optional[str] = None
     PEXELS_API_KEY: Optional[str] = None

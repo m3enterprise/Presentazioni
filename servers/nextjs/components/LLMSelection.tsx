@@ -24,6 +24,7 @@ import {
 } from "@/utils/providerUtils";
 import { IMAGE_PROVIDERS, LLM_PROVIDERS } from "@/utils/providerConstants";
 import { LLMConfig } from "@/types/llm_config";
+import BedrockConfig from "./BedrockConfig";
 
 // Button state interface
 interface ButtonState {
@@ -126,12 +127,13 @@ export default function LLMProviderSelection({
           onValueChange={handleProviderChange}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-5 bg-transparent h-10">
+          <TabsList className="grid w-full grid-cols-6 bg-transparent h-10">
             <TabsTrigger value="openai">OpenAI</TabsTrigger>
             <TabsTrigger value="google">Google</TabsTrigger>
             <TabsTrigger value="anthropic">Anthropic</TabsTrigger>
             <TabsTrigger value="ollama">Ollama</TabsTrigger>
             <TabsTrigger value="custom">Custom</TabsTrigger>
+            <TabsTrigger value="bedrock">Bedrock</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -196,6 +198,18 @@ export default function LLMProviderSelection({
               onInputChange={input_field_changed}
             />
           </TabsContent>
+
+          {/* Bedrock Content */}
+            <TabsContent value="bedrock" className="mt-6">
+              <BedrockConfig
+                awsRegion={llmConfig.BEDROCK_AWS_REGION || ""}
+                bedrockModel={llmConfig.BEDROCK_MODEL || ""}
+                awsAccessKeyId={llmConfig.BEDROCK_AWS_ACCESS_KEY_ID || ""}
+                awsSecretAccessKey={llmConfig.BEDROCK_AWS_SECRET_ACCESS_KEY || ""}
+                onInputChange={input_field_changed}
+              />
+            </TabsContent>
+
         </Tabs>
 
         {/* Image Provider Selection */}

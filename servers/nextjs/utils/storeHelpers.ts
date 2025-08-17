@@ -58,6 +58,14 @@ export const hasValidLLMConfig = (llmConfig: LLMConfig) => {
     llmConfig.CUSTOM_MODEL !== null &&
     llmConfig.CUSTOM_MODEL !== undefined;
 
+  const isBedrockConfigValid =
+    llmConfig.BEDROCK_AWS_ACCESS_KEY_ID !== "" && 
+    llmConfig.BEDROCK_AWS_SECRET_ACCESS_KEY !== "" && 
+    llmConfig.BEDROCK_AWS_REGION !== "" && 
+    llmConfig.BEDROCK_MODEL !== "";
+
+  console.log(`bedrock config: ${isBedrockConfigValid} with ${JSON.stringify(llmConfig)}`);
+
   const isImageConfigValid = () => {
     switch (llmConfig.IMAGE_PROVIDER) {
       case "pexels":
@@ -84,7 +92,9 @@ export const hasValidLLMConfig = (llmConfig: LLMConfig) => {
             ? isOllamaConfigValid
             : llmConfig.LLM === "custom"
               ? isCustomConfigValid
-              : false;
+              : llmConfig.LLM === "bedrock"
+                ? isBedrockConfigValid
+                : false;
 
   return isLLMConfigValid && isImageConfigValid();
 };

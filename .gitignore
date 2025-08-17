@@ -17,3 +17,6 @@ nltk
 chroma
 container.db
 .next-build
+
+servers/fastapi/.idea
+.DS_Store

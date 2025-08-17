@@ -1,6 +1,27 @@
 from anthropic import AsyncAnthropic
 from openai import AsyncOpenAI
 from google import genai
+import boto3 # TODO: use aioboto3 for async support later on
+import asyncio
+
+def _get_boto3_client(access_key, secret_key, region):
+    return boto3.client(
+        "bedrock",
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+        region_name=region
+    )
+
+
+def _list_models_sync(access_key: str, secret_key: str, region: str) -> list[str]:
+    client = boto3.client(
+        "bedrock",
+        region_name=region,
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+    )
+    response = client.list_foundation_models()
+    return [m["modelId"] for m in response["modelSummaries"]]
 
 
 async def list_available_openai_compatible_models(url: str, api_key: str) -> list[str]:
@@ -19,3 +40,7 @@ async def list_available_anthropic_models(api_key: str) -> list[str]:
 async def list_available_google_models(api_key: str) -> list[str]:
     client = genai.Client(api_key=api_key)
     return list(map(lambda x: x.name, client.models.list(config={"page_size": 50})))
+
+
+async def list_available_bedrock_models(access_key: str, secret_key: str, region: str) -> list[str]:
+    return await asyncio.to_thread(_list_models_sync, access_key, secret_key, region)

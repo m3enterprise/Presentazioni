@@ -43,6 +43,10 @@ from utils.async_iterator import iterator_to_async
 from utils.dummy_functions import do_nothing_async
 from utils.get_env import (
     get_anthropic_api_key_env,
+    get_aws_access_key_id_env,
+    get_aws_region_env,
+    get_aws_secret_access_key_env,
+    get_bedrock_model_env,
     get_custom_llm_api_key_env,
     get_custom_llm_url_env,
     get_disable_thinking_env,
@@ -99,6 +103,8 @@ class LLMClient:
                 return self._get_ollama_client()
             case LLMProvider.CUSTOM:
                 return self._get_custom_client()
+            case LLMProvider.BEDROCK:
+                return self._get_bedrock_client()
             case _:
                 raise HTTPException(
                     status_code=400,
@@ -145,6 +151,33 @@ class LLMClient:
             base_url=get_custom_llm_url_env(),
             api_key=get_custom_llm_api_key_env() or "null",
         )
+
+    def _get_bedrock_client(self):
+        if not get_aws_region_env():
+            raise HTTPException(
+                status_code=400,
+                detail="AWS Region is not set",
+            )
+
+        if not get_bedrock_model_env():
+            raise HTTPException(
+                status_code=400,
+                detail="Bedrock Model is not set",
+            )
+
+        if not get_aws_access_key_id_env():
+            raise HTTPException(
+                status_code=400,
+                detail="AWS Access Key ID is not set",
+            )
+        
+        if not get_aws_secret_access_key_env():
+            raise HTTPException(
+                status_code=400,
+                detail="AWS Secret Access Key is not set",
+            )
+
+        return None
 
     # ? Prompts
     def _get_system_prompt(self, messages: List[LLMMessage]) -> str:

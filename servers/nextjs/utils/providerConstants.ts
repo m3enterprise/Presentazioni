@@ -89,4 +89,9 @@ export const LLM_PROVIDERS: Record<string, LLMProviderOption> = {
     label: "Custom",
     description: "Custom LLM",
   },
+  bedrock: {
+    value: "bedrock",
+    label: "Bedrock",
+    description: "Amazon Bedrock's text generation models",
+  }
 }; 
