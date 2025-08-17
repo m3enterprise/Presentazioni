@@ -70,7 +70,7 @@ def get_custom_model_env():
 
 
 def get_aws_region_env():
-    return os.environ.get("AWS_REGION")
+    return os.environ.get("BEDROCK_AWS_REGION")
 
 
 def get_bedrock_model_env():
@@ -78,11 +78,11 @@ def get_bedrock_model_env():
 
 
 def get_aws_access_key_id_env():
-    return os.environ.get("AWS_ACCESS_KEY_ID")
+    return os.environ.get("BEDROCK_AWS_ACCESS_KEY_ID")
 
 
 def get_aws_secret_access_key_env():
-    return os.environ.get("AWS_SECRET_ACCESS_KEY")
+    return os.environ.get("BEDROCK_AWS_SECRET_ACCESS_KEY")
 
 
 def get_pexels_api_key_env():

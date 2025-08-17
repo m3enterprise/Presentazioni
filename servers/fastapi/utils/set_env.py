@@ -56,6 +56,18 @@ def set_ollama_model_env(value):
 def set_custom_model_env(value):
     os.environ["CUSTOM_MODEL"] = value
 
+def set_aws_region_env(value):
+    os.environ["BEDROCK_AWS_REGION"] = value
+
+def set_aws_access_key_id_env(value):
+    os.environ["BEDROCK_AWS_ACCESS_KEY_ID"] = value
+
+def set_aws_secret_access_key_env(value):
+    os.environ["BEDROCK_AWS_SECRET_ACCESS_KEY"] = value
+
+def set_bedrock_model_env(value):
+    os.environ["BEDROCK_MODEL"] = value
+
 
 def set_pexels_api_key_env(value):
     os.environ["PEXELS_API_KEY"] = value

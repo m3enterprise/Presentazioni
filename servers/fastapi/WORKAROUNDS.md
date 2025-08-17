@@ -1,4 +1,12 @@
 
+## Bedrock + Model /chat equivalent
+Amazon Bedrock provides multiple different models with differnet parameters and required configurations.
+- **Currently supporting: Anthropic Claude models**
+  - Have thinking and reasoning capabilities
+- **[NEXT]** Deepseek models (chat parameters are different)
+- Amazon Titan models (chat parameters are different)
+- Amazon Nova models (chat parameters are different)
+
 ## Chosen authentication for boto3 + Bedrock
 There are many ways to authenticate with AWS services using `boto3`, but the recommended way is to use the `boto3` library.
 We capture the following from the user and store it securely:

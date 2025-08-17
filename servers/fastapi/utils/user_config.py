@@ -22,12 +22,17 @@ from utils.get_env import (
     get_image_provider_env,
     get_pixabay_api_key_env,
     get_extended_reasoning_env,
-    get_web_grounding_env,
+    get_web_grounding_env, get_aws_region_env, get_aws_access_key_id_env, get_aws_secret_access_key_env,
+    get_bedrock_model_env,
 )
 from utils.parsers import parse_bool_or_none
 from utils.set_env import (
     set_anthropic_api_key_env,
     set_anthropic_model_env,
+    set_aws_access_key_id_env,
+    set_aws_region_env,
+    set_aws_secret_access_key_env,
+    set_bedrock_model_env,
     set_custom_llm_api_key_env,
     set_custom_llm_url_env,
     set_custom_model_env,
@@ -74,6 +79,10 @@ def get_user_config():
         CUSTOM_LLM_URL=existing_config.CUSTOM_LLM_URL or get_custom_llm_url_env(),
         CUSTOM_LLM_API_KEY=existing_config.CUSTOM_LLM_API_KEY
         or get_custom_llm_api_key_env(),
+        BEDROCK_AWS_REGION=existing_config.BEDROCK_AWS_REGION or get_aws_region_env(),
+        BEDROCK_AWS_ACCESS_KEY_ID=existing_config.BEDROCK_AWS_ACCESS_KEY_ID or get_aws_access_key_id_env(),
+        BEDROCK_AWS_SECRET_ACCESS_KEY=existing_config.BEDROCK_AWS_SECRET_ACCESS_KEY or get_aws_secret_access_key_env(),
+        BEDROCK_MODEL=existing_config.BEDROCK_MODEL or get_bedrock_model_env(),
         CUSTOM_MODEL=existing_config.CUSTOM_MODEL or get_custom_model_env(),
         IMAGE_PROVIDER=existing_config.IMAGE_PROVIDER or get_image_provider_env(),
         PIXABAY_API_KEY=existing_config.PIXABAY_API_KEY or get_pixabay_api_key_env(),
@@ -127,6 +136,14 @@ def update_env_with_user_config():
         set_custom_llm_api_key_env(user_config.CUSTOM_LLM_API_KEY)
     if user_config.CUSTOM_MODEL:
         set_custom_model_env(user_config.CUSTOM_MODEL)
+    if user_config.BEDROCK_AWS_REGION:
+        set_aws_region_env(user_config.BEDROCK_AWS_REGION)
+    if user_config.BEDROCK_AWS_ACCESS_KEY_ID:
+        set_aws_access_key_id_env(user_config.BEDROCK_AWS_ACCESS_KEY_ID)
+    if user_config.BEDROCK_AWS_SECRET_ACCESS_KEY:
+        set_aws_secret_access_key_env(user_config.BEDROCK_AWS_SECRET_ACCESS_KEY)
+    if user_config.BEDROCK_MODEL:
+        set_bedrock_model_env(user_config.BEDROCK_MODEL)
     if user_config.IMAGE_PROVIDER:
         set_image_provider_env(user_config.IMAGE_PROVIDER)
     if user_config.PIXABAY_API_KEY:
