@@ -74,6 +74,10 @@ const setupUserConfigFromEnv = () => {
     CUSTOM_LLM_API_KEY:
       process.env.CUSTOM_LLM_API_KEY || existingConfig.CUSTOM_LLM_API_KEY,
     CUSTOM_MODEL: process.env.CUSTOM_MODEL || existingConfig.CUSTOM_MODEL,
+    BEDROCK_AWS_REGION: process.env.BEDROCK_AWS_REGION || existingConfig.BEDROCK_AWS_REGION,
+    BEDROCK_MODEL: process.env.BEDROCK_MODEL || existingConfig.BEDROCK_MODEL,
+    BEDROCK_AWS_ACCESS_KEY_ID: process.env.BEDROCK_AWS_ACCESS_KEY_ID || existingConfig.BEDROCK_AWS_ACCESS_KEY_ID,
+    BEDROCK_AWS_SECRET_ACCESS_KEY: process.env.BEDROCK_AWS_SECRET_ACCESS_KEY || existingConfig.BEDROCK_AWS_SECRET_ACCESS_KEY,
     PEXELS_API_KEY: process.env.PEXELS_API_KEY || existingConfig.PEXELS_API_KEY,
     PIXABAY_API_KEY:
       process.env.PIXABAY_API_KEY || existingConfig.PIXABAY_API_KEY,

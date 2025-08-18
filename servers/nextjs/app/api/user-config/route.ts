@@ -47,6 +47,10 @@ export async function POST(request: Request) {
     CUSTOM_LLM_API_KEY:
       userConfig.CUSTOM_LLM_API_KEY || existingConfig.CUSTOM_LLM_API_KEY,
     CUSTOM_MODEL: userConfig.CUSTOM_MODEL || existingConfig.CUSTOM_MODEL,
+    BEDROCK_AWS_ACCESS_KEY_ID: userConfig.BEDROCK_AWS_ACCESS_KEY_ID || existingConfig.BEDROCK_AWS_ACCESS_KEY_ID,
+    BEDROCK_AWS_SECRET_ACCESS_KEY: userConfig.BEDROCK_AWS_SECRET_ACCESS_KEY || existingConfig.BEDROCK_AWS_SECRET_ACCESS_KEY,
+    BEDROCK_AWS_REGION: userConfig.BEDROCK_AWS_REGION || existingConfig.BEDROCK_AWS_REGION,
+    BEDROCK_MODEL: userConfig.BEDROCK_MODEL || existingConfig.BEDROCK_MODEL,
     PIXABAY_API_KEY:
       userConfig.PIXABAY_API_KEY || existingConfig.PIXABAY_API_KEY,
     IMAGE_PROVIDER: userConfig.IMAGE_PROVIDER || existingConfig.IMAGE_PROVIDER,
