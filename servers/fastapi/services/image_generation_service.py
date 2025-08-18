@@ -137,8 +137,7 @@ class ImageGenerationService:
             return image_url
 
     async def generate_image_nova(self, prompt: str, output_directory: str) -> str:
-        print(f"Initializing Nova Canvas image generation for prompt: {prompt} and region: {get_nova_image_region_env()}")
-
+        
         client = boto3.client(
             "bedrock-runtime",
             region_name=get_nova_image_region_env(),
