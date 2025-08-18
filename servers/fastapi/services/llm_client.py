@@ -1,5 +1,6 @@
 import asyncio
 import json
+import boto3
 from typing import AsyncGenerator, List, Optional
 from fastapi import HTTPException
 from openai import AsyncOpenAI
@@ -19,6 +20,7 @@ from google.genai.types import Tool as GoogleTool
 from anthropic import AsyncAnthropic
 from anthropic.types import Message as AnthropicMessage
 from anthropic import MessageStreamEvent as AnthropicMessageStreamEvent
+from anthropic import AsyncAnthropicBedrock
 from enums.llm_provider import LLMProvider
 from models.llm_message import (
     AnthropicAssistantMessage,
@@ -153,6 +155,11 @@ class LLMClient:
         )
 
     def _get_bedrock_client(self):
+        """
+        Use the Anthropic client with Bedrock support.
+        https://github.com/anthropics/anthropic-sdk-python?tab=readme-ov-file#aws-bedrock
+        :return:
+        """
         if not get_aws_region_env():
             raise HTTPException(
                 status_code=400,
@@ -177,7 +184,11 @@ class LLMClient:
                 detail="AWS Secret Access Key is not set",
             )
 
-        return None
+        return AsyncAnthropicBedrock(
+            aws_region=get_aws_region_env(),
+            aws_access_key=get_aws_access_key_id_env(),
+            aws_secret_key=get_aws_secret_access_key_env()
+        )
 
     # ? Prompts
     def _get_system_prompt(self, messages: List[LLMMessage]) -> str:
@@ -471,6 +482,13 @@ class LLMClient:
             case LLMProvider.CUSTOM:
                 content = await self._generate_custom(
                     model=model, messages=messages, max_tokens=max_tokens
+                )
+            case LLMProvider.BEDROCK:
+                content = await self._generate_anthropic(
+                    model=model,
+                    messages=messages,
+                    max_tokens=max_tokens,
+                    tools=parsed_tools,
                 )
         if content is None:
             raise HTTPException(
@@ -855,6 +873,15 @@ class LLMClient:
                     strict=strict,
                     max_tokens=max_tokens,
                 )
+            case LLMProvider.BEDROCK:
+                # Uses the Anthropic client with Bedrock support when this is called self._client will be an instance of AsyncAnthropicBedrock
+                content = await self._generate_anthropic_structured(
+                    model=model,
+                    messages=messages,
+                    response_format=response_format,
+                    tools=parsed_tools,
+                    max_tokens=max_tokens,
+                )
         if content is None:
             raise HTTPException(
                 status_code=400,
@@ -1160,6 +1187,13 @@ class LLMClient:
             case LLMProvider.CUSTOM:
                 return self._stream_custom(
                     model=model, messages=messages, max_tokens=max_tokens
+                )
+            case LLMProvider.BEDROCK:
+                return self._stream_anthropic(
+                    model=model,
+                    messages=messages,
+                    max_tokens=max_tokens,
+                    tools=parsed_tools,
                 )
 
     # ? Stream Structured Content
@@ -1591,6 +1625,14 @@ class LLMClient:
                     messages=messages,
                     response_format=response_format,
                     strict=strict,
+                    max_tokens=max_tokens,
+                )
+            case LLMProvider.BEDROCK:
+                return self._stream_anthropic_structured(
+                    model=model,
+                    messages=messages,
+                    response_format=response_format,
+                    tools=parsed_tools,
                     max_tokens=max_tokens,
                 )
 

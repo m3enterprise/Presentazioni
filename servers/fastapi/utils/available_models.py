@@ -1,3 +1,5 @@
+import json
+
 from anthropic import AsyncAnthropic
 from openai import AsyncOpenAI
 from google import genai
@@ -12,6 +14,15 @@ def _get_boto3_client(access_key, secret_key, region):
         region_name=region
     )
 
+def _get_inference_profile_prefix(region: str) -> str:
+    if region.startswith("us-"):
+        return "us"
+    elif region.startswith("eu-"):
+        return "eu"
+    elif region.startswith("ap-"):
+        return "apac"
+    else:
+        return ""
 
 def _list_models_sync(access_key: str, secret_key: str, region: str) -> list[str]:
     client = boto3.client(
@@ -21,7 +32,20 @@ def _list_models_sync(access_key: str, secret_key: str, region: str) -> list[str
         aws_secret_access_key=secret_key,
     )
     response = client.list_foundation_models()
-    return [m["modelId"] for m in response["modelSummaries"]]
+
+    inference_profile_prefix = _get_inference_profile_prefix(region)
+
+    invokable_ids = []
+    for m in response["modelSummaries"]:
+        model_id = m["modelId"]
+        if "inferenceTypesSupported" in m and ("INFERENCE_PROFILE" in m["inferenceTypesSupported"]):
+            # use the profile ARN (required for some Anthropic models etc.)
+            invokable_ids.append(f"{inference_profile_prefix}.{model_id}")
+        else:
+            # use modelId directly
+            invokable_ids.append(model_id)
+
+    return invokable_ids
 
 
 async def list_available_openai_compatible_models(url: str, api_key: str) -> list[str]:
