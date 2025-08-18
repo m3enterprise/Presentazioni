@@ -38,6 +38,11 @@ def _list_models_sync(access_key: str, secret_key: str, region: str) -> list[str
     invokable_ids = []
     for m in response["modelSummaries"]:
         model_id = m["modelId"]
+        provider = m.get("providerName", "")
+        if provider.lower() != "anthropic":
+            # skip non-Anthropic models
+            continue
+
         if "inferenceTypesSupported" in m and ("INFERENCE_PROFILE" in m["inferenceTypesSupported"]):
             # use the profile ARN (required for some Anthropic models etc.)
             invokable_ids.append(f"{inference_profile_prefix}.{model_id}")
